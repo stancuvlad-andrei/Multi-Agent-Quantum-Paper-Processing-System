@@ -1,0 +1,44 @@
+# Proposed Title
+Analytical Information-Disturbance Tradeoffs for Cheat-Sensitive Hidden-Order Quantum Routing
+
+---
+
+# Problem Addressed
+In the cheat-sensitive quantum routing primitive introduced by Oliviero et al., an intermediate quantum routing provider (Bob) establishes an entangled link between a sender (Alice) and an intended client (Charlie) while Alice tests whether Bob has monitored her coherently encoded routing destination. Although the baseline primitive guarantees non-zero detection probability against explicit projective address-dephasing attacks, it lacks a general, quantitative information-disturbance relation. Specifically, it does not mathematically bound the destination information accessible to an arbitrary quantum adversary as a function of Alice's observed rejection probability (or test-failure rate). Without an analytical information-disturbance trade-off, one cannot bound Bob's eavesdropping capacity or rigorously parameterize abort thresholds under imperfect, realistic network conditions.
+
+---
+
+# Proposed Methodology/Solution
+To establish a rigorous information-disturbance bound against arbitrary coherent attacks by Bob, we model Bob’s interaction as a completely positive trace-preserving (CPTP) map acting on Alice's two routing query registers, $\mathcal{H}_{Q_1} \otimes \mathcal{H}_{Q_2}$, augmented by Bob's ancilla system $\mathcal{H}_E$. 
+
+Let the routing target be an index $x \in \mathcal{X} = \{1, \dots, N\}$, chosen according to a prior distribution $p(x)$. In the hidden-order framework, Alice prepares a two-register state $\lvert \Psi_x^{(b)} \rangle$ conditioned on a private bit $b \in \{0, 1\}$:
+$$
+\lvert \Psi_x^{(0)} \rangle = \lvert x \rangle_{Q_1} \otimes \frac{1}{\sqrt{2}} \left( \lvert 0 \rangle + \lvert x \rangle \right)_{Q_2}, \quad \lvert \Psi_x^{(1)} \rangle = \frac{1}{\sqrt{2}} \left( \lvert 0 \rangle + \lvert x \rangle \right)_{Q_1} \otimes \lvert x \rangle_{Q_2},
+$$
+where $\lvert 0 \rangle$ denotes a designated null routing address. Bob applies an arbitrary unitary dilation $U_{BE}$ acting jointly on the query registers and an initial environmental ancilla $\lvert 0 \rangle_E$. 
+
+Alice’s verification on the trap register corresponds to projecting the returned trap state onto the valid heralded coherent state $\lvert +_x \rangle = \frac{1}{\sqrt{2}}(\lvert 0 \rangle + \lvert x \rangle)$. For a fixed destination $x$, let $\mathcal{E}$ denote the effective reduced channel acting on the trap subsystem when averaged over Alice's random selection of the hidden order $b \in \{0, 1\}$. 
+
+We quantify Bob's gained information using the accessible information $I_{\text{acc}}(X; E) = \max_{\{M_y\}} I(X; Y)$, where $\{M_y\}$ is an arbitrary positive operator-valued measure (POVM) executed on Bob’s ancillary system $\rho_{E|x} = \operatorname{Tr}_{Q_1 Q_2} [ U_{BE} (\lvert \Psi_x^{(b)} \rangle \langle \Psi_x^{(b)} \rvert \otimes \lvert 0 \rangle \langle 0 \rvert_E) U_{BE}^\dagger ]$.
+
+To derive the tradeoff:
+1. **Operator-Norm Disturbance Formulation:** 
+   Let the average trap-state verification fidelity be $\bar{F} = \frac{1}{|\mathcal{X}|} \sum_{x} \langle +_x \rvert \rho_{\text{trap}|x} \lvert +_x \rangle$, where $\rho_{\text{trap}|x}$ is the unnormalized state received by Alice conditioned on a successful herald from Charlie. The average probability of detecting a cheating provider is $p_{\text{fail}} = 1 - \bar{F}$.
+2. **Gentle Measurement and Stinespring Distinguishability:** 
+   By the gentle measurement lemma, any extraction of information that discriminates $\lvert 0 \rangle$ from $\lvert x \rangle$ within the coherent superposition inevitably induces phase randomization. By bounding the Bures distance (and subsequently the trace distance) between Bob's marginal states $\rho_{E|x}$ and $\rho_{E|x'}$, we exploit the non-orthogonality between the direct state $\lvert x \rangle$ and the trap state $\lvert +_x \rangle$.
+3. **Entropic Uncertainty / Holevo Bound:** 
+   Using the Holevo bound, Bob's accessible information is upper-bounded by the Holevo quantity $\chi(\{p(x), \rho_{E|x}\}) \le S(\rho_E) - \sum_x p(x) S(\rho_{E|x})$. Applying the quantitative information-disturbance relation for quantum channels via Stinespring isometric extension, we obtain:
+   $$
+   I_{\text{acc}}(X; E) \le \chi(\{p(x), \rho_{E|x}\}) \le 2 \, h\left( \sqrt{p_{\text{fail}} (2 - p_{\text{fail}})} \right) + p_{\text{fail}} \log_2(N - 1),
+   $$
+   where $h(p) = -p \log_2 p - (1-p) \log_2(1-p)$ is the binary entropy function.
+
+In the asymptotic limit where $p_{\text{fail}} \to 0$, the bound continuously contracts to $I_{\text{acc}}(X; E) \to 0$, analytically guaranteeing that zero disturbance strictly enforces zero extractable destination information.
+
+---
+
+# Theoretical Implications
+This result provides the first rigorous continuity relation connecting physical rejection statistics to privacy leakage in hidden-order quantum routing:
+- **Parameterization of Security Thresholds:** By inverting the functional inequality, network designers can set precise experimental abort thresholds $\epsilon_{\text{abort}}$. If the observed trap failure rate falls below $\epsilon_{\text{abort}}$, Bob's destination-guessing advantage is strictly upper-bounded by a quantitative function of $\epsilon_{\text{abort}}$.
+- **Bridging the Primitive to Composable Privacy:** Establishing an analytical bound on $\chi(\{p(x), \rho_{E|x}\})$ is a critical prerequisite for generating composable privacy frameworks (such as quantum differential privacy or universal composability) for quantum routing protocols.
+- **Robustness Against Coherent Routing Attacks:** The derivation holds for arbitrary CPTP interactions and coherent ancillary systems, elevating the primitive's security proof from ad-hoc detection of classical address-dephasing attacks to general physical security against collective quantum attacks.

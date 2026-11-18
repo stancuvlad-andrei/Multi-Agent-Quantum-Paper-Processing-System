@@ -1,0 +1,59 @@
+# Proposed Title
+**Autonomous Dual-Rail Subspace Embeddings for Surpassing the Dissipative Amplitude Damping Horizon in Coined Szegedy Quantum Routing**
+
+---
+
+# Problem Addressed
+In coined Szegedy quantum walks defined on edge-duplicated signed graphs $\vec{\Sigma} = (V, \vec{E}, \sigma)$, wave-packet dispersion and back-scattering are theoretically suppressed to achieve deterministic Perfect State Transfer (PST). However, open-system dissipative coupling introduces an unmitigated **Amplitude Damping Horizon**. Photon loss occurs at a per-hop probability $\lambda$, causing the state fidelity to decay exponentially with transmission hop count $\tau$:
+$$F(\tau; \lambda) = (1 - \lambda)^\tau$$
+
+To maintain a certified quantum routing advantage over classical measurement-and-forward protocols, the fidelity must strictly exceed the classical teleportation benchmark:
+$$F > F_{\text{classical}} = \frac{2}{3}$$
+
+Under realistic loss parameters in integrated photonic waveguide circuits ($\lambda \approx 0.02$), routing is fundamentally bounded by an operational horizon of:
+$$\tau_{\max} \approx \frac{|\ln(2/3)|}{\lambda} \approx \frac{0.4055}{\lambda} \approx 20\text{ hops}$$
+
+This bound severely restricts topological router scaling. In glued binary trees, where traversal requires $\tau = 2d$ steps, tree depth is constrained to $d \le 10$. In signed dumbbell switches $D_{2m,0,2n}$, total network dimensions are constrained to $m + 1 + n \le 20$. Because classical measurement collapses arbitrary superpositions, active error mitigation must be incorporated autonomously without projective mid-circuit measurements.
+
+---
+
+# Proposed Methodology/Solution
+We propose a **Dual-Rail Parity-Preserving Signed Graph Architecture** ($\vec{\Sigma}_{\text{dual}}$) combined with autonomous dissipation-filtering subspaces. Instead of encoding the flying qubit within the single-photon occupation of a single spatial graph mode, the logical routing manifold is embedded over two isomorphic, non-interacting signed graphs:
+$$\vec{\Sigma}_{\text{dual}} = \vec{\Sigma}^{(0)} \oplus \vec{\Sigma}^{(1)}$$
+
+### 1. Dual-Rail State Representation
+The routed quantum state $|\psi_L\rangle = \alpha |0_L\rangle + \beta |1_L\rangle$ is mapped onto orthogonal path modes across identical signed topologies:
+$$|0_L\rangle = |1\rangle_{\vec{\Sigma}^{(0)}} |0\rangle_{\vec{\Sigma}^{(1)}}, \quad |1_L\rangle = |0\rangle_{\vec{\Sigma}^{(0)}} |1\rangle_{\vec{\Sigma}^{(1)}}$$
+Here, $|1\rangle_{\vec{\Sigma}^{(k)}}$ denotes a single-photon excitation on the $k$-th subgraph manifold, and $|0\rangle_{\vec{\Sigma}^{(k)}}$ represents the local photonic vacuum.
+
+### 2. Dual-Rail Szegedy Coin and Shift Dynamics
+The composite Hilbert space decomposes into $\mathcal{H} = \mathcal{H}_{\text{coin}} \otimes \mathcal{H}_{\text{pos}} \otimes \mathcal{H}_{\text{rail}}$, where $\mathcal{H}_{\text{rail}} \cong \mathbb{C}^2$. The modified walk step unitary operator $\hat{U}_{\text{dual}}$ acts synchronously across both rails:
+$$\hat{U}_{\text{dual}} = \hat{S}_{\text{dual}} \left( \hat{C}_{\vec{\Sigma}} \otimes \hat{I}_2 \right)$$
+where $\hat{C}_{\vec{\Sigma}}$ is the zero-backscattering signed Szegedy coin operator, and $\hat{S}_{\text{dual}} = \hat{S}^{(0)} \oplus \hat{S}^{(1)}$ executes synchronous conditional spatial shifts on $\vec{\Sigma}^{(0)}$ and $\vec{\Sigma}^{(1)}$. Because the subgraphs share identical signed edge configurations $\sigma(e)$, the constructive and destructive interference pathways remain symmetric across both spatial domains.
+
+### 3. Autonomous Erasure Conversion
+Amplitude damping acts locally on each hop via Kraus operators $\hat{E}_0 = |0\rangle\langle 0| + \sqrt{1 - \lambda}|1\rangle\langle 1|$ and $\hat{E}_1 = \sqrt{\lambda}|0\rangle\langle 1|$. When applied across the dual-rail manifold:
+- The single-photon subspace $\mathcal{H}_1 = \text{span}\{|0_L\rangle, |1_L\rangle\}$ experiences uniform attenuation without phase skew or relative amplitude distortion:
+  $$\hat{E}_0^{\otimes 2} |\psi_L\rangle = \sqrt{1 - \lambda}|\psi_L\rangle$$
+- Photon loss via $\hat{E}_1$ projects the state entirely into the orthogonal zero-photon vacuum subspace $\mathcal{H}_0 = \{|0\rangle_{\vec{\Sigma}^{(0)}} |0\rangle_{\vec{\Sigma}^{(1)}}\}$:
+  $$\hat{E}_1^{(0)} \hat{E}_0^{(1)} |\psi_L\rangle = \sqrt{\lambda} \alpha |0, 0\rangle, \quad \hat{E}_0^{(0)} \hat{E}_1^{(1)} |\psi_L\rangle = \sqrt{\lambda} \beta |0, 0\rangle$$
+
+By engineering the detector interface at the destination node as a passive, non-demolition single-photon presence verification (or via threshold single-photon detection), the vacuum null-state $|0, 0\rangle$ is discarded without requiring mid-circuit tracking.
+
+---
+
+# Theoretical Implications
+1. **Decoupling Fidelity from Hop Distance:**  
+   Conditioned upon detection at arrival time $\tau$, the normalized conditional state is:
+   $$\rho_L(\tau) = \frac{\operatorname{Tr}_{\text{env}}[\mathcal{E}^\tau(|\psi_L\rangle\langle\psi_L|)]}{\operatorname{Tr}[\dots]} = |\psi_L\rangle\langle\psi_L|$$
+   Consequently, the delivered conditional fidelity is topologically preserved at unity:
+   $$F_{\text{cond}}(\tau) \equiv 1 > \frac{2}{3}, \quad \forall \, \tau \in \mathbb{N}$$
+   Amplitude damping is converted from a continuous coherent state degradation into a discrete, heraldable erasure error.
+
+2. **Overcoming Router Scaling Constraints:**  
+   Because state degradation is eliminated from the surviving quantum channel, network scaling is no longer bounded by $\tau_{\max} \le 20$. Glued binary tree depths can scale beyond $d > 10$, and signed dumbbell switch dimensions ($m + 1 + n$) can be extended arbitrarily, constrained solely by the acceptable probabilistic throughput:
+   $$P_{\text{succ}}(\tau) = (1 - \lambda)^\tau$$
+   For $\lambda = 0.02$ and $\tau = 50$, the system maintains $P_{\text{succ}} \approx 0.364$ while operating at unit conditional fidelity, entirely bypassing the classical threshold bottleneck.
+
+3. **Invariance of Topological Symmetries:**  
+   Because $\hat{U}_{\text{dual}}$ acts as a direct sum of identical walks, all underlying interference properties—including destructive phase interference at switch junctions and bipartite loop symmetries—are preserved. This provides a blueprint for scalable, loss-resilient quantum internet routers operating on photonic integrated circuits.

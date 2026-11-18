@@ -1,0 +1,49 @@
+================================================================================
+PAPER TITLE: Priority-Aware Routing for Quantum Networks: Integrating Coherence-Time Constraints into Scheduling
+AUTHORS: Sadhgun Ram Dasi, Aswath Babu H
+SOURCE FILE: 2609.38380v1.pdf
+================================================================================
+
+[1. ABSTRACT]
+Quantum networks face a fundamental challenge absent in classical networks: finite memory coherence times mean that queuing delay directly degrades information quality, causing decoherence that has no classical analog. Existing routing protocols optimize for hop count or channel fidelity while treating scheduling delays as a secondary concern, leaving fidelity vulnerable to congestion-induced decoherence.
+
+We present a coherence-aware routing protocol that integrates decoherence constraints into path selection via a priority-modulated aging model derived analytically from Weighted Fair Queueing (WFQ) theory, where high-priority traffic receives compressed effective queue delay. We build a custom discrete-event simulator—verified against NetSquid (MAE < 10^-6 across 10^4 states)—and evaluate across two structurally diverse topology classes under identical physical parameters, isolating topology structure as the sole independent variable. In all experiments, our protocol is benchmarked against loss-only Dijkstra routing and FIFO scheduling as baselines.
+
+On Erdős–Rényi topologies, P2 traffic achieves 96.08% fidelity under a 9x load increase with only 0.04 percentage point degradation, versus a 13.51 point collapse for the loss-only baseline; P2 tail latency holds stable at 0.055 ms while Dijkstra degrades 5.5x. On Barabási–Albert scale-free topologies, our protocol delivers a +4.12 percentage point fidelity advantage with 97.8% higher aggregate throughput at operational loads over the baseline, with a clearly characterized hub-saturation boundary at 160k QPS. FIFO scheduling provides negligible priority differentiation on both topology classes, providing strong evidence that coherence-aware routing—not scheduling alone—is responsible for the observed QoS gains.
+
+--------------------------------------------------------------------------------
+[2. KEYWORDS & INDEX TERMS]
+Explicit Keywords:
+Quantum networking, quantum routing, coherence-aware scheduling, priority queuing, weighted fair queueing, cross-layer protocol design, decoherence modeling, fidelity preservation, Lindblad master equation, quality of service, discrete-event simulation, NetSquid, NISQ networks, quantum memory, near-term quantum networks, scale-free topology.
+
+Core Technical Concepts:
+Priority-aware routing, coherence-time constraints, Weighted Fair Queueing (WFQ), priority-modulated aging, decoherence modeling, Lindblad master equation, fidelity preservation, discrete-event simulation, Erdős–Rényi and Barabási–Albert topologies, hub-saturation boundary.
+
+--------------------------------------------------------------------------------
+[3. OPEN QUESTIONS, LIMITATIONS & FUTURE WORK]
+Based on Section IX (Limitations, Future Work, and Open Questions) of the paper, the authors identify the following open research questions, technical limitations, and future directions:
+
+* Extension to Entanglement Distribution and Bell-Pair Routing:
+  - Transition from Single-Qubit to Entangled Pair Transmission: The current work evaluates single-qubit routing rather than entanglement distribution. Future work involves extending the priority-modulated aging model to Bell pairs (|Phi^+>_AB) undergoing independent dephasing on each qubit, governed by F_Bell(t) = ((1 + e^(-t/T_mem)) / 2)^2.
+  - Composite Bell Cost Formulation: Implementation and benchmarking of an expanded path cost function incorporating heralded swap failure penalties at repeater nodes R(p):
+    C_path^Bell = sum_{(u,v) in p} (alpha * L_uv + beta * Psi(u, v, P)) + gamma * sum_{v in R(p)} (1 - p_swap^(v))
+    against entanglement-specific routing baselines (e.g., Pant et al.).
+  - Swap Penalty Calibration: Resolving the open question of how the swap failure weight gamma should be dynamically or statically configured relative to link loss (alpha) and queuing aging (beta) as a function of underlying hardware swap fidelity.
+  - Stranded Half-Pair Handling: Determining whether the priority escalation mechanism requires modification when an entanglement swap failure strands a single remaining half-pair in quantum memory.
+
+* Non-Markovian Noise Dynamics:
+  - Moving beyond the memoryless Markovian Lindblad master equation to incorporate non-Markovian environmental interactions. This addresses physical hardware platforms such as nitrogen-vacancy (NV) centers in diamond and solid-state memories, where past interactions persist and fidelity evolution requires complex numerical integration rather than standard exponential decay.
+
+* EWMA Lag and Hub-Aware Queue Estimation:
+  - Mitigating the lag introduced by Exponentially Weighted Moving Average (EWMA) queue estimation under rapid load shifts, which precipitates an operational breakdown on Barabási–Albert scale-free topologies beyond 160k QPS.
+  - Developing topology-adaptive smoothing parameters, specifically evaluating degree-weighted responsiveness:
+    lambda_v = lambda_0 * (1 + deg(v) / deg_max)
+    to increase update responsiveness proportionally to node centrality (moving past the static parameter lambda = 0.2 tailored for Erdős–Rényi graphs).
+
+* Adaptive Routing Parameter Optimization:
+  - Replacing static weight parameters (alpha, beta) with dynamic adaptation mechanisms capable of responding to fluctuating traffic loads, network topology variations, and time-dependent hardware degradation.
+  - Formulating parameter tuning as a reinforcement learning (RL) framework using delivered high-priority (P2) fidelity as the primary reward function.
+
+* Hardware-Aware Protection Modeling:
+  - Explicitly incorporating the physical overhead of dynamical decoupling (DD)—including gate error costs and energy constraints—to advance priority-based memory protection from an analytical scheduling abstraction into a concrete hardware-level resource allocation scheme.
+================================================================================

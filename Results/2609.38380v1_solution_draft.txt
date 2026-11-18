@@ -1,0 +1,61 @@
+# Proposed Title
+**Dynamic Swap-Risk Calibration and Receding-Horizon Priority Escalation for Entanglement Distribution in Quantum Networks**
+
+---
+
+## Problem Addressed
+In near-term quantum repeater networks, transitioning from single-qubit store-and-forward routing to distributed entanglement introduces non-deterministic degradation modes that violate standard queuing assumptions. While existing priority-modulated aging models successfully mitigate coherence degradation in single-qubit queues via Weighted Fair Queueing (WFQ), they encounter two structural limitations when applied to distributed Bell pairs ($|\Phi^+\rangle_{AB}$):
+
+1. **Uncalibrated Swap-Loss Penalties:** The composite path cost function for heralded entanglement distribution,
+   $$C_{\text{path}}^{\text{Bell}} = \sum_{(u,v) \in p} \left( \alpha L_{uv} + \beta \Psi(u,v,P) \right) + \sum_{v \in R(p)} \gamma_v (1 - p_{\text{swap}}^{(v)}),$$
+   treats the swap penalty weight $\gamma_v$ as an uncalibrated heuristic. It fails to dynamically couple the probabilistic failure of Bell-state measurements (BSMs) to the temporal decoherence rate of the underlying quantum memories.
+2. **The Stranded Half-Pair Dilemma:** Entanglement swapping is fundamentally probabilistic ($p_{\text{swap}} < 1$). A heralded BSM failure at repeater $v$ abruptly severs the entanglement chain, stranding the complementary half-pair in the quantum memory of an adjacent node $u$. Under static priority regimes, this stranded qubit languishes in local storage, rapidly decohering according to 
+   $$F_{\text{Bell}}(t) = \left(\frac{1 + e^{-t/T_{\text{mem}}}}{2}\right)^2,$$
+   consuming memory resources without an active end-to-end path.
+
+---
+
+## Proposed Methodology/Solution
+We propose an analytical framework integrating **Coherence-Equivalent Swap Weighting (CESW)** with a **Receding-Horizon Priority Escalation (RHPE)** mechanism to govern Bell-pair routing and memory recovery.
+
+```
+       [ Repeater u ] ============ ( Entangled Link ) ============ [ Repeater v ]
+             |                                                            |
+     [ Memory Queue ]                                              [ BSM Engine ]
+             |                                                            |
+  (BSM Failure Signal) <------------------------------------------- (Swap Fails)
+             |
+   [ RHPE Dynamic Escalation ]
+   Priority: P -> P_eff(t)
+   WFQ Virtual Clock Shift: v_i -> v_i - Delta_v(t)
+             |
+   [ Fast-Track Entanglement Regeneration / Swap Path ]
+```
+
+### 1. Coherence-Equivalent Swap Weighting (CESW)
+To determine $\gamma_v$ dynamically rather than statically, we map the cost of a failed BSM directly to the expected decoherence penalty incurred during classical signaling and local link re-generation. 
+
+Let the round-trip classical signaling delay across adjacent edges be $\tau_{\text{CC}}$, and let link-generation latency follow a geometric distribution with success probability $p_{\text{gen}}$ and channel duration $\tau_0$. The expected recovery time upon swap failure is:
+$$\mathbb{E}[T_{\text{rec}}] = \tau_{\text{CC}} + \frac{\tau_0}{p_{\text{gen}}}$$
+
+Expanding the Bell-state fidelity $F_{\text{Bell}}(t)$ to first order around the operational queue delay $t_0$, the fidelity differential per unit time is $\left|\frac{dF}{dt}\right| \approx \frac{1}{T_{\text{mem}}}$. We calibrate $\gamma_v$ by equating the marginal cost of swap failure to the marginal queuing penalty parameterized by $\beta$:
+$$\gamma_v^*(t) = \beta \cdot \frac{\mathbb{E}[T_{\text{rec}}^{(v)}]}{T_{\text{mem}}^{(v)}} = \beta \left( \frac{\tau_{\text{CC}}^{(v)} + \frac{\tau_0}{p_{\text{gen}}^{(v)}}}{T_{\text{mem}}^{(v)}} \right)$$
+
+This sets $\gamma_v^*$ dynamically: high-coherence nodes ($T_{\text{mem}} \gg \tau$) incur lower swap penalties, whereas memory-constrained repeaters actively bias the path metric away from probabilistic bottlenecks.
+
+### 2. Receding-Horizon Priority Escalation (RHPE)
+To resolve stranded half-pairs, we introduce an adaptive priority modulation factor into the WFQ scheduler. When repeater $v$ broadcasts a heralded failure flag for pair $k$, node $u$ intercepts the notification and dynamically scales the virtual finishing time $V_k$ of the remaining half-pair. 
+
+Rather than maintaining a static priority class $P \in \{P_0, P_1, P_2\}$, the stranded half-pair’s effective priority $P_{\text{eff}}(t)$ escalates continuously as its storage duration approaches the classical entanglement purification threshold $F_{\text{th}} = 0.5$:
+$$P_{\text{eff}}(t) = P_{\text{base}} \cdot \exp \left( \frac{t - t_{\text{gen}}}{T_{\text{mem}} \cdot \ln(2F_{\text{th}}^{-1/2} - 1)^{-1}} \right)$$
+
+Within the WFQ engine, node $u$ shifts the queue's virtual clock state by adjusting the packet's virtual finishing time:
+$$V_k^{\text{RHPE}}(t) = V_k - \kappa \left( \frac{P_{\text{eff}}(t)}{P_{\text{base}}} \right) \cdot \frac{L_k}{w_i}$$
+where $w_i$ is the original WFQ weight and $\kappa$ is an elasticity constant calibrated to link capacity. This virtual clock compression advances stranded half-pairs to the head of the re-entanglement queue within a bounded horizon $\tau_{\text{crit}} = T_{\text{mem}} \ln(2F_{\text{target}}^{-1/2} - 1)$, guaranteeing that either a replacement link is established before critical decoherence occurs, or the qubit is deterministically purged to liberate memory.
+
+---
+
+## Theoretical Implications
+1. **Pareto-Optimal Entanglement Paths:** Calibrating $\gamma_v^*$ to memory dephasing times unifies link generation, memory decoherence, and measurement failure into an analytically coherent cost space. Path selection under Dijkstra’s algorithm guarantees minimum fidelity loss across heterogeneous architectures where $T_{\text{mem}}$ and $p_{\text{swap}}$ vary across nodes.
+2. **Mitigation of Cascade Invalidation:** In standard FIFO or static-WFQ regimes, stranded qubits accumulate queuing delay, leading to state invalidation downstream. RHPE bounds the tail decoherence of interrupted states, maximizing the salvage probability of half-pairs and suppressing memory occupancy bloat under high quantum-packet-per-second (QPS) regimes.
+3. **Cross-Layer Tractability:** This formulation links physical-layer Markovian dephasing rates directly to link-layer virtual scheduling times, establishing a formal framework for Quality of Service (QoS) guarantees in distributed multi-hop Bell routing.

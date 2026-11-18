@@ -1,0 +1,27 @@
+================================================================================
+PAPER TITLE: A Cheat-Sensitive Primitive for Destination-Private Quantum Routing
+AUTHORS: S. F. E. Oliviero, S. Onofri, V. Giovannetti
+SOURCE FILE: 2610.04359v1.pdf
+================================================================================
+
+[1. ABSTRACT]
+Quantum networks will rely on intermediate nodes to distribute entanglement, but the same nodes may learn which users are being connected. We introduce a minimal two-call routing primitive in which a user, Alice, establishes an entangled link with one of several clients while testing whether the provider, Bob, has disturbed a coherently encoded request. The construction adapts the hidden-order mechanism of quantum private queries: one call contains a direct request, the other a coherent superposition of the desired and null addresses, and Alice keeps their order secret. A private matching qubit held by the selected client restores the coherent test state after a favorable Bell-measurement outcome, so that Alice can test the returned query without any further operation by Bob. The claim is deliberately limited. The protocol shows that a routing request can carry a physical cheating test, and it detects an explicit destination-reading attack with nonzero probability. It does not yet provide a quantitative information-disturbance tradeoff, composable security, or certification of an unmeasured output against arbitrary attacks. We also characterize the exact perfect-pass limit, in which Bob’s residual state, averaged over the private matching states, is independent of the destination.
+
+--------------------------------------------------------------------------------
+[2. KEYWORDS & INDEX TERMS]
+Explicit Keywords: None explicitly labeled
+Core Technical Concepts: Destination-private quantum routing, Quantum private queries, Hidden-order mechanism, Cheat-sensitive routing, Entanglement distribution, Bell measurement, Information-disturbance tradeoff, Address-dephasing attack
+
+--------------------------------------------------------------------------------
+[3. OPEN QUESTIONS, LIMITATIONS & FUTURE WORK]
+* Quantitative Information-Disturbance Bounds: The current protocol lacks a general, quantitative relationship connecting Alice's rejection probability (test statistics) to the amount of destination information accessible to a cheating provider (Bob). The authors are preparing an extended version to supply these bounds under explicit model assumptions.
+* Lack of Composable Security and Anonymity: The protocol provides a proof-of-principle cheat-sensitive primitive rather than a complete security theorem; it does not achieve composable security or composable anonymity.
+* Uncertified Retained Output Against Arbitrary Attacks: Because the trap measurement tests only the trap position, the direct position remains unmeasured. Consequently, the scheme does not certify the unmeasured direct output Bell pair against an arbitrary malicious router.
+* Relaxing the Exact-Direct-Singlet Assumption (Output Verification): The perfect-pass proposition assumes exact functionality of the direct output as a premise rather than deriving it as a consequence of the trap test alone. Future work proposes relaxing this by scaling resources (e.g., three singlets per client, one trap query, and two direct queries) so Alice and the chosen client can sacrifice one candidate direct link to verify direct-output functionality while retaining the other.
+* Random Test/Output Assignment: To build a stronger construction that prevents Bob from exploiting unmeasured blocks, the authors propose investigating a random test/output assignment where the router cannot determine during protocol execution which block will be retained.
+* Continuity Estimates for Approximate Acceptance: The existing theoretical argument for the perfect-pass limit is exact and lacks continuity bounds or estimates for scenarios where Alice accepts only approximately rather than perfectly.
+* Untrusted Clients and Malicious Participants: The current trust model strictly assumes trusted local devices for Alice and all Charlies, leaving the protocol open to vulnerabilities from malicious clients.
+* Loss, Implementation Noise, and Practical Channels: The protocol relies on private authenticated classical channels and ideal conditions, without accounting for physical implementation noise, photon/channel loss, or non-ideal detectors.
+* Repeated Routing Requests: The current model does not evaluate or cover the security implications of repeated calls to the same destination over time.
+* Efficiency and Conclusive Probability: The baseline single-qubit herald is conclusive with a probability of only 1/4 per attempt, and detecting the explicit address-dephasing attack yields a joint detection probability of only 1/8 per attempt when the herald is included.
+================================================================================

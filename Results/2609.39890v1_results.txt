@@ -1,0 +1,58 @@
+================================================================================
+PAPER TITLE: Quantum State Routing and Perfect State Transfer on Signed Graphs under Environmental Noise
+AUTHORS: Nur Mohammad Sanfui, Supriyo Dutta
+SOURCE FILE: 2609.39890v1.pdf
+================================================================================
+
+[1. ABSTRACT]
+Routing unknown quantum information across distributed communication networks requires autonomous, measurement-free mechanisms to prevent wave-function collapse. Szegedy quantum walks provide a mechanism for spatial state transport. The conventional walks on unweighted graphs suffer from severe back-reflection, spatial dispersion, and channel crosstalk. In this paper, we introduce a deterministic topological quantum routing architecture based on coined Szegedy quantum walks on edge-duplicated signed graphs $\vec{\Sigma} = (V, \vec{E}, \sigma)$. By treating edge signs as localized phase shifts within a balanced coin reflection, we enforce an exact zero back-scattering condition across routing nodes. We demonstrate deterministic Perfect State Transfer (PST) with unit fidelity at exact arrival times across fundamental archetypes, including the signed dumbbell switch $D_{2m,0,2n}$ and scalable glued binary trees. Furthermore, we analyze routing performance under realistic open-system amplitude and phase damping noise channels.
+
+--------------------------------------------------------------------------------
+[2. KEYWORDS & INDEX TERMS]
+Explicit Keywords:
+- Quantum routing
+- Topological network
+- Szegedy quantum walk
+- Signed graph
+- Perfect state transfer
+- Quantum noise
+
+Core Technical Concepts:
+- Coined Szegedy quantum walks
+- Edge-duplicated signed graphs
+- Zero back-scattering condition
+- Signed dumbbell switch
+- Glued binary trees
+- Amplitude and phase damping channels
+- Classical teleportation threshold
+- Integrated photonic waveguide circuits
+
+--------------------------------------------------------------------------------
+[3. OPEN QUESTIONS, LIMITATIONS & FUTURE WORK]
+* Classical Advantage Threshold Constraint:
+  To maintain a quantum routing advantage over classical measurement-and-forward schemes, the delivered quantum state fidelity must strictly exceed the classical teleportation benchmark:
+  F > F_classical = 2/3 ≈ 0.667
+
+* Photon Loss & Dissipative Attenuation (Amplitude Damping Horizon):
+  - The delivered end-to-end quantum state fidelity decays exponentially with transmission hop count τ according to F(τ; λ) = (1 - λ)^τ, where λ is the per-hop photon loss rate.
+  - For low loss rates (λ ≪ 1), routing without active mitigation is strictly bounded by a maximum hop limit of:
+    τ_max ≈ |ln(2/3)| / λ ≈ 0.4055 / λ
+  - For realistic modern laser-written integrated optical waveguides (λ ≈ 0.02), state routing is restricted to at most τ_max ≈ 20 hops before fidelity drops below the classical threshold.
+
+* Topological Router Scale Limitations under Photon Loss:
+  - Glued Binary Trees: Due to the τ_max ≤ 20 constraint, the maximum tree depth is restricted to d ≤ 10 (since total travel time across the glued trees is τ = 2d).
+  - Signed Dumbbell Switches (D_{2m,0,2n}): The combined cycle and bridge dimensions are constrained to m + 1 + n ≤ 20.
+
+* Pure Dephasing & Phase Damping Horizon:
+  - Under a per-step dephasing probability p, off-diagonal coherence terms decay as (1 - p)^τ, leading to state fidelity scaling as:
+    F_phase(τ; p) = 1/2 + 1/2 * (1 - p)^τ
+  - To surpass the classical threshold (F > 2/3), the operational hop limit under phase damping is bounded by:
+    τ_max = ln(1/3) / ln(1 - p) ≈ 1.0986 / p
+  - For p = 0.02, this yields an operational ceiling of τ_max ≈ 55 hops.
+
+* Need for Active Error Mitigation / Repeaters:
+  While phase damping sustains quantum advantage over twice the distance of amplitude damping, network scalability remains inherently distance-bounded in the absence of active quantum error correction architectures or quantum repeaters.
+
+* Structural Symmetry Requirements:
+  For the dumbbell switch architecture, destructive interference into the bridge mode and in-phase arrival at junctions fundamentally require even-length bipartite cycles; routing fidelity relies on maintaining this topological bipartite symmetry.
+================================================================================
